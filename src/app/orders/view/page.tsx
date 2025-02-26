@@ -4,7 +4,8 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 
 type Order = {
   id: number;
-  customer: string;
+  customerName: string;
+  productImage: string;
   productName: string;
   category: string;
   subCategory: string;
@@ -20,7 +21,8 @@ type Order = {
 const initialOrders: Order[] = [
   {
     id: 1,
-    customer: "John Doe",
+    customerName: "John Doe",
+    productImage: "/mnt/data/image.png",
     productName: "Milk",
     category: "Dairy",
     subCategory: "Organic",
@@ -34,7 +36,8 @@ const initialOrders: Order[] = [
   },
   {
     id: 2,
-    customer: "Jane Smith",
+    customerName: "Jane Smith",
+    productImage: "/mnt/data/image.png",
     productName: "Cheese",
     category: "Dairy",
     subCategory: "Aged",
@@ -48,7 +51,8 @@ const initialOrders: Order[] = [
   },
   {
     id: 3,
-    customer: "Alice Johnson",
+    customerName: "Alice Johnson",
+    productImage: "/mnt/data/image.png",
     productName: "Butter",
     category: "Dairy",
     subCategory: "Salted",
@@ -112,59 +116,46 @@ export default function ViewOrders() {
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-6">All Orders</h2>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[1200px] border-collapse border border-gray-700 rounded-lg shadow-md">
-          <thead className="bg-blue-600 text-white">
-            <tr>
-              {["Order ID", "Customer", "Product Name", "Category", "Sub Category", "Description", "Price ($)", "Old Price ($)", "Available Stock", "Quantity", "Status", "Total ($)", "Actions"].map((header) => (
-                <th key={header} className="border border-gray-700 p-3 text-center font-bold">{header}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map((order) => (
-              <tr key={order.id} className="text-center bg-blue-50 hover:bg-blue-100 transition-colors duration-200">
-                <td className="border border-gray-300 p-3">{order.id}</td>
-                <td className="border border-gray-300 p-3">{order.customer}</td>
-                <td className="border border-gray-300 p-3">{order.productName}</td>
-                <td className="border border-gray-300 p-3">{order.category}</td>
-                <td className="border border-gray-300 p-3">{order.subCategory}</td>
-                <td className="border border-gray-300 p-3">{order.description}</td>
-                <td className="border border-gray-300 p-3">{order.price}</td>
-                <td className="border border-gray-300 p-3">{order.oldPrice}</td>
-                <td className="border border-gray-300 p-3">{order.availableStock}</td>
-                <td className="border border-gray-300 p-3">{order.quantity}</td>
-                <td className="border border-gray-300 p-3">{getStatusBadge(order.status)}</td>
-                <td className="border border-gray-300 p-3">{order.total}</td>
-                <td className="border border-gray-300 p-3 flex justify-center space-x-3">
-                  <FaEdit className="text-green-600 cursor-pointer hover:text-green-800" onClick={() => handleEdit(order)} />
-                  <FaTrash className="text-red-600 cursor-pointer hover:text-red-800" onClick={() => handleDelete(order.id)} />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <table className="border-collapse w-full border border-gray-300">
+  <thead className="bg-blue-600 text-black">
+    <tr>
+      {[
+        "Order ID", "Customer Name", "Product Image", "Product Name", "Category",
+        "Sub Category", "Description", "Price", "Old Price", "Available Stock",
+        "Quantity", "Status", "Total", "Actions"
+      ].map((header) => (
+        <th key={header} className="bg-gray-200 border border-gray-300 p-2">{header}</th>
+      ))}
+    </tr>
+  </thead>
+  <tbody>
+    {orders.map((order) => (
+      <tr key={order.id} className="text-center hover:bg-blue-100 transition-colors duration-200">
+        <td className="border border-gray-300 p-3">{order.id}</td>
+        <td className="border border-gray-300 p-3">{order.customerName}</td>
+        <td className="border border-gray-300 p-3">
+          <img src={order.productImage} alt={order.productName} className="w-12 h-12 mx-auto" />
+        </td>
+        <td className="border border-gray-300 p-3">{order.productName}</td>
+        <td className="border border-gray-300 p-3">{order.category}</td>
+        <td className="border border-gray-300 p-3">{order.subCategory}</td>
+        <td className="border border-gray-300 p-3">{order.description}</td>
+        <td className="border border-gray-300 p-3">{order.price}</td>
+        <td className="border border-gray-300 p-3">{order.oldPrice}</td>
+        <td className="border border-gray-300 p-3">{order.availableStock}</td>
+        <td className="border border-gray-300 p-3">{order.quantity}</td>
+        <td className="border border-gray-300 p-3">{getStatusBadge(order.status)}</td>
+        <td className="border border-gray-300 p-3">{order.total}</td>
+        <td className="border border-gray-300 p-3 flex justify-center space-x-3">
+          <FaEdit className="text-green-600 cursor-pointer hover:text-green-800" onClick={() => handleEdit(order)} />
+          <FaTrash className="text-red-600 cursor-pointer hover:text-red-800" onClick={() => handleDelete(order.id)} />
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>
 
-      {editOrder && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-lg grid grid-cols-2 gap-4">
-            <h3 className="text-xl font-bold mb-4 col-span-2">Edit Order</h3>
-            {Object.keys(editOrder).map((key) => (
-              <div key={key}>
-                <label className="block font-semibold">{key}</label>
-                <input
-                  type="text"
-                  name={key}
-                  value={(editOrder as any)[key]}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded"
-                />
-              </div>
-            ))}
-            <button onClick={handleSave} className="bg-blue-500 text-white px-4 py-2 rounded col-span-2">Save</button>
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { ManageUsersProvider } from "../../manageUsers/ManageUsers/page";
+
 export default function Dashboard() {
     const stats = [
       { title: "Total Sales", value: "0", color: "bg-blue-500" },
