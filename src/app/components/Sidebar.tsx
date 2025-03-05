@@ -272,7 +272,8 @@ export default function Sidebar() {
           {/* Other Sections */}
           {[
             { title: "Manage Products", state: isProductsOpen, setState: setIsProductsOpen, icon: <FaTags className="text-orange-400" />, links: [
-              { href: "/manageProducts/AddProducts", text: "Add Products" }
+              { href: "/manageProducts/AddProducts", text: "Add Products" },
+              { href: "/manageProducts/ProductList", text: "Products List" }
             ]},
             { title: "Manage Users", state: isUsersOpen, setState: setIsUsersOpen, icon: <FaUsers className="text-red-400" />, links: [
             { href: "/manageUsers/ViewCustomer", text: "View Customers" },
@@ -282,10 +283,10 @@ export default function Sidebar() {
           { title: "Manage Payments", state: isPaymentsOpen, setState: setIsPaymentsOpen, icon: <FaMoneyBillWave className="text-green-400" />, links: [
             { href: "/managePayment", text: "Manage Payments" }
           ]},
-          { title: "Manage Inventory", state: isInventoryOpen, setState: setIsInventoryOpen, icon: <FaWarehouse className="text-purple-400" />, links: [
-            { href: "/manageInventory/CheckStockLevels", text: "Check Stock Levels" }
+          // { title: "Manage Inventory", state: isInventoryOpen, setState: setIsInventoryOpen, icon: <FaWarehouse className="text-purple-400" />, links: [
+          //   { href: "/manageInventory/CheckStockLevels", text: "Check Stock Levels" }
             
-          ]},
+          // ]},
           ].map((section, index) => (
             <li key={index}>
               <button

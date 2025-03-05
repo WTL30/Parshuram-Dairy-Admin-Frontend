@@ -1,29 +1,32 @@
 "use client";
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 export default function ViewCustomer() {
   const [customers, setCustomers] = useState([]);
 
   useEffect(() => {
-    // On mount, read the latest data from localStorage
-    const stored = localStorage.getItem("myCustomers");
-    if (stored) {
-      setCustomers(JSON.parse(stored));
-    } else {
-      // Default data (shouldn't be used if Block/Unblock page already created data)
-      const defaults = [
-        { id: 1, name: "John Doe", gmail: "john@gmail.com", status: "Active" },
-        { id: 2, name: "Jane Smith", gmail: "jane@gmail.com", status: "Blocked" },
-        { id: 3, name: "Michael Brown", gmail: "michael@gmail.com", status: "Active" },
-      ];
-      setCustomers(defaults);
-      localStorage.setItem("myCustomers", JSON.stringify(defaults));
-    }
-  }, []);
+    const fetchUsers = async () => {
+      try {
+        console.log("Fetching users...");
+        const response = await axios.get(
+          "http://localhost:5000/api/admin-manage/"
+        );
 
-  if (!customers.length) {
-    return <p className="p-4">Loading...</p>;
-  }
+        console.log("Fetched Users:", response.data.data);
+
+        setCustomers(response.data.data);
+
+        // setLoading(false);
+      } catch (error) {
+        console.error("Failed to fetch users:", error.message);
+        setError("Failed to fetch users. Please try again.");
+        // setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   return (
     <div className="p-4">
@@ -39,17 +42,22 @@ export default function ViewCustomer() {
             </tr>
           </thead>
           <tbody>
-            {customers.map((user) => (
-              <tr key={user.id} className="text-center hover:bg-gray-50 transition-colors">
-                <td className="border p-2">{user.id}</td>
-                <td className="border p-2">{user.name}</td>
-                <td className="border p-2">{user.gmail}</td>
+            {customers.map((user, index) => (
+              <tr
+                key={index}
+                className="text-center hover:bg-gray-50 transition-colors"
+              >
+                <td className="border p-2">{index + 1}</td>
+                <td className="border p-2">{user.userId.name}</td>
+                <td className="border p-2">{user.userId.email}</td>
                 <td
                   className={`border p-2 font-bold ${
-                    user.status === "Blocked" ? "text-red-500" : "text-green-500"
+                    user.items[0].status === "Blocked"
+                      ? "text-red-500"
+                      : "text-green-500"
                   }`}
                 >
-                  {user.status}
+                  {user.items[0].status}
                 </td>
               </tr>
             ))}
