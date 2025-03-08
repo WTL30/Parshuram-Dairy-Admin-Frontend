@@ -12,17 +12,17 @@
 // const AddProduct = () => {
 //   const [products, setProducts] = useState([]);
 //   const [formData, setFormData] = useState({
-    
+
 //     product: "",
 //     category: "",
 //     subCategory: "",
 //     description: "",
 //     price: "",
 
-  
+
 //     stock: "",
 //     quantity: "",
-    
+
 //   });
 //   const [showForm, setShowForm] = useState(false);
 //   const [editingProductId, setEditingProductId] = useState(null);
@@ -39,7 +39,7 @@
 
 //   const handleSubmit = (e) => {
 //     e.preventDefault();
-    
+
 //     if (editingProductId !== null) {
 //       setProducts(products.map(product => product.id === editingProductId ? { ...formData, id: editingProductId, total: formData.price * formData.quantity } : product));
 //       setEditingProductId(null);
@@ -53,16 +53,16 @@
 //     }
 
 //     setFormData({
-      
+
 //       product: "",
 //       category: "",
 //       subCategory: "",
 //       description: "",
 //       price: "",
-      
+
 //       stock: "",
 //       quantity: "",
-      
+
 //     });
 //     setShowForm(false);
 //   };
@@ -90,9 +90,9 @@
 //         <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md mt-4">
 //           <h2 className="text-2xl font-bold mb-4">{editingProductId ? "Edit Product" : "Add Product"}</h2>
 //           <div className="grid grid-cols-2 gap-4">
-            
+
 //             <input type="text" name="product" placeholder="Product" value={formData.product} onChange={handleChange} className="p-2 border rounded" required />
-            
+
 //             <select name="category" value={formData.category} onChange={handleCategoryChange} className="p-2 border rounded" required>
 //               <option value="">Select Category</option>
 //               {Object.keys(categoryOptions).map((cat, index) => (
@@ -106,13 +106,13 @@
 //                 <option key={index} value={subCat}>{subCat}</option>
 //               ))}
 //             </select>
-            
+
 //             <input type="text" name="description" placeholder="Description" value={formData.description} onChange={handleChange} className="p-2 border rounded" required />
 //             <input type="number" name="price" placeholder="Price" value={formData.price} onChange={handleChange} className="p-2 border rounded" required />
-            
+
 //             <input type="number" name="stock" placeholder="Stock" value={formData.stock} onChange={handleChange} className="p-2 border rounded" required />
 //             <input type="number" name="quantity" placeholder="Quantity" value={formData.quantity} onChange={handleChange} className="p-2 border rounded" required />
-            
+
 //           </div>
 //           <button type="submit" className="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg">
 //             {editingProductId ? "Update Product" : "Save Product"}
@@ -148,7 +148,7 @@
 //                   <td className="border p-2">{product.price}</td>
 //                   <td className="border p-2">{product.stock}</td>
 //                   <td className="border p-2">{product.quantity}</td>
-                  
+
 
 //                   <td className="border p-2">
 //                     <button onClick={() => handleEdit(product)} className="bg-yellow-600 text-white px-2 py-1 rounded mr-2">Edit</button>
@@ -347,9 +347,9 @@
 //                   <td className="border p-2">{product.stock}</td>
 //                   <td className="border p-2">{product.quantity}</td>
 //                   <td className="border p-2">{product.unit}</td>
-                
+
 //                   <td className="border p-2"><img src={URL.createObjectURL(product.image)} alt="Product" className="h-12 w-12 object-cover" /></td>
-                
+
 //                   <td className="border p-2">
 //                     <button onClick={() => handleEdit(product)} className="bg-yellow-600 text-white px-2 py-1 rounded mr-2">Edit</button>
 //                     <button onClick={() => handleDelete(product.id)} className="bg-red-600 text-white px-2 py-1 rounded">Delete</button>
@@ -375,11 +375,13 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const categoryOptions = {
-  "Dairy Products": ["Milk", "Cheese", "Butter", "Yogurt"],
+  "Dairy Products": ["Milk", "Paneer & Cheese", "Ghee & Butter", "Curd & Yogurt","Sweetened Dairy Beverages"],
+  "Baking & Cooking Essentials": ["Dessert Premixes"],
   "Bakery": ["Bread", "Cake", "Cookies", "Pastries"],
-  "Sauce": ["Tomato Sauce", "Soy Sauce", "Barbecue Sauce", "Chili Sauce"],
-  "Vegetables": ["Carrots", "Potatoes", "Tomatoes", "Spinach"],
-  "Beverages": ["Juice", "Soda", "Coffee", "Tea"],
+  "Sauce": ["Tomato Sauce", "Soy Sauce", "Barbecue Sauce", "Chili Sauce","Chocolate Sauce"],
+  "Vegetables": ["Carrots", "Potatoes", "Tomatoes", "Spinach","Fresh Vegetables"],
+  "Frozen Foods / Fresh Vegetables": ["Frozen Snacks","Frozen Vegetbles"],
+  "Beverages": ["Juice", "Soda", "Coffee", "Tea","Instant Drink Mixes / Hot Beverages"],
 };
 
 const unitOptions = ["L", "ml", "gm", "kg"];
@@ -444,34 +446,46 @@ export default function AddProduct() {
       <h1 className="text-2xl font-bold text-center mb-4">Upload Product</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input type="text" name="productName" placeholder="Product Name" className="border p-2 rounded w-full" onChange={handleInputChange} />
+        <input type="text" name="productName" placeholder="Product Name" className="border p-2 rounded w-full" onChange={handleInputChange} required />
         <select name="category" value={formData.category} onChange={handleCategoryChange} className="p-2 border rounded" required>
           <option value="">Select Category</option>
           {Object.keys(categoryOptions).map((cat) => (
             <option key={cat} value={cat}>{cat}</option>
           ))}
         </select>
-        <select name="subCategory" value={formData.subCategory} onChange={handleInputChange} className="p-2 border rounded" required disabled={!formData.category}>
+        <select name="subCategory" value={formData.subCategory} onChange={handleInputChange} className="p-2 border rounded" required disabled={!formData.category} >
           <option value="">Select Subcategory</option>
           {formData.category && categoryOptions[formData.category].map((subCat) => (
             <option key={subCat} value={subCat}>{subCat}</option>
           ))}
         </select>
-        <input type="text" name="productDescription" placeholder="Description" className="border p-2 rounded w-full" onChange={handleInputChange} />
-        <input type="text" name="nutritionalInfo" placeholder="Nutritional Info" className="border p-2 rounded w-full" onChange={handleInputChange} />
-        <input type="number" name="price" placeholder="Price" className="border p-2 rounded w-full" onChange={handleInputChange} />
-        <input type="text" name="quantity" placeholder="Quantity" className="border p-2 rounded w-full" onChange={handleInputChange} />
+        <input type="number" name="price" placeholder="Price" className="border p-2 rounded w-full" onChange={handleInputChange} required />
+
+        <textarea
+          name="productDescription"
+          placeholder="Product Description"
+          className="border p-2 rounded w-full max-w-xl resize-none h-24"
+          onChange={handleInputChange}
+          required
+        />
+        <textarea
+          name="nutritionalInfo"
+          placeholder="Nutritional Info."
+          className="border p-2 rounded w-full max-w-xl resize-none h-24"
+          onChange={handleInputChange}
+          required
+        />        <input type="text" name="quantity" placeholder="Quantity" className="border p-2 rounded w-full" onChange={handleInputChange} required />
         <select name="unit" value={formData.unit} onChange={handleInputChange} className="p-2 border rounded" required>
           <option value="">Select Unit</option>
           {unitOptions.map((unit) => (
             <option key={unit} value={unit}>{unit}</option>
           ))}
         </select>
-        <input type="number" name="availableStock" placeholder="Available Stock" className="border p-2 rounded w-full" onChange={handleInputChange} />
+        <input type="number" name="availableStock" placeholder="Available Stock" className="border p-2 rounded w-full" onChange={handleInputChange} required />
         <input type="file" className="border p-2 rounded w-full" onChange={handleFileChange} />
       </div>
 
-      <button className="bg-blue-500 text-white px-4 py-2 rounded mt-4 w-full hover:bg-blue-600" onClick={handleUpload}>
+      <button className="bg-gray-800 text-white px-4 py-2 rounded mt-4 w-full " onClick={handleUpload}>
         Upload Product
       </button>
 

@@ -1001,151 +1001,441 @@
 //   );
 // }
 
+// "use client";
+// import { useState, useEffect } from "react";
+// import axios from "axios";
+// import { FaEdit } from "react-icons/fa";
+// import { GiConfirmed } from "react-icons/gi";
+
+// export default function ViewOrders() {
+//   const [orders, setOrders] = useState([]);
+//   const [editOrder, setEditOrder] = useState(null);
+//   const [loading, setLoading] = useState(false);
+
+//   // Fetch Orders from API
+//   // useEffect(() => {
+//   //   const fetchOrders = async () => {
+//   //     try {
+//   //       const res = await axios.get("http://localhost:5000/api/admin-manage/");
+//   //       console.log("------",res)
+//   //       setOrders(res.data.data);
+//   //     } catch (error) {
+//   //       console.error("Error fetching orders:", error);
+//   //     }
+//   //   };
+
+//   //   fetchOrders();
+//   // }, []);
+
+
+//   useEffect(() => {
+//     const fetchOrders = async () => {
+//       try {
+//         const res = await axios.get("http://localhost:5000/api/admin-manage/");
+//         console.log("------", res);
+
+//         // Modify the orders to include the full image URL
+//         const updatedOrders = res.data.data.map(order => ({
+//           ...order,
+//           items: order.items.map(item => ({
+//             ...item,
+//             productId: {
+//               ...item.productId,
+//               image: item?.productId?.image
+//                 ? `http://localhost:5000/Images/${item?.productId?.image}`
+//                 : null
+//             }
+//           }))
+//         }));
+
+//         setOrders(updatedOrders);
+//       } catch (error) {
+//         console.error("Error fetching orders:", error);
+//       }
+//     };
+
+//     fetchOrders();
+//   }, []);
+
+
+//   // Handle Edit
+//   const handleEdit = (order) => {
+//     const editableData = {
+//       orderId: order._id,
+//       customerName: order?.userId?.name,
+//       productName: order?.items[0]?.productId?.productName,
+//       productImage: order?.items[0]?.productId?.images[0],
+//       category: order?.items[0]?.productId?.category,
+//       subCategory: order?.items[0]?.productId?.subCategory,
+//       description: order?.items[0]?.productId?.productDescription,
+//       price: order?.items[0]?.productId?.price,
+//       // oldPrice: order?.items[0]?.productId?.oldprice,
+//       availableStock: order?.items[0]?.productId?.availableStock,
+//       quantity: order?.items[0]?.quantity,
+//       status: order?.items[0]?.status,
+//       totalAmount: order?.totalAmount,
+//     };
+//     setEditOrder(editableData);
+//   };
+
+//   // Handle Input Change
+//   const handleChange = (e) => {
+//     const { name, value } = e.target;
+//     setEditOrder((prev) => ({ ...prev, [name]: value }));
+//   };
+
+//   // Handle File Upload
+//   const handleFileChange = (e) => {
+//     if (e.target.files && e.target.files[0]) {
+//       const file = e.target.files[0];
+//       const imageUrl = URL.createObjectURL(file);
+//       setEditOrder((prev) => ({ ...prev, productImage: imageUrl }));
+//     }
+//   };
+
+//   // Save Edited Order
+//   const handleSave = async () => {
+//     if (!editOrder) return;
+//     setLoading(true);
+
+//     try {
+//       const updatedData = {
+//         productName: editOrder.productName,
+//         productImage: editOrder.productImage,
+//         category: editOrder.category,
+//         subCategory: editOrder.subCategory,
+//         description: editOrder.description,
+//         price: editOrder.price,
+//         // oldPrice: editOrder.oldPrice,
+//         availableStock: editOrder.availableStock,
+//         quantity: editOrder.quantity,
+//         status: editOrder.status,
+//         totalAmount: editOrder.totalAmount,
+//       };
+
+//       await axios.put(
+//         `http://localhost:5000/api/admin-manage/${editOrder.orderId}`,
+//         updatedData
+//       );
+
+//       setOrders((prevOrders) =>
+//         prevOrders.map((order) =>
+//           order._id === editOrder.orderId
+//             ? { ...order, ...updatedData }
+//             : order
+//         )
+//       );
+
+//       setEditOrder(null);
+//     } catch (error) {
+//       console.error("Error updating order:", error);
+//     }
+
+//     setLoading(false);
+//   };
+
+//   // Confirm Order API Call
+//   const handleConfirmOrder = async (order) => {
+//     if (order.status === "Confirmed") return;
+//     setLoading(true);
+
+//     try {
+//       const updatedStatus = { status: "Confirmed" };
+
+//       await axios.put(
+//         `http://localhost:5000/api/admin-manage/${order._id}`,
+//         updatedStatus
+//       );
+
+//       // ✅ Update Local State Immediately
+//       setOrders((prevOrders) =>
+//         prevOrders.map((o) =>
+//           o._id === order._id
+//             ? { ...o, status: "Confirmed" }      //items: o.items.map(item => ({ ...item, status: "Confirmed" }))
+//             : o
+//         )
+//       );
+
+//       console.log(`Order ${order._id} confirmed successfully`);
+//     } catch (error) {
+//       console.error("Error confirming order:", error);
+//     }
+
+//     setLoading(false);
+//   };
+
+//   // Close Modal on Background Click
+//   const closeModal = (e) => {
+//     if (e.target.id === "modal-background") {
+//       setEditOrder(null);
+//     }
+//   };
+
+//   return (
+//     <div className="p-6">
+//       <h2 className="text-2xl font-bold mb-6">All Orders</h2>
+//       <div className="overflow-x-auto">
+//         <table className="w-full min-w-[1200px] border-collapse border border-gray-700 rounded-lg shadow-md">
+//           <thead className="bg-blue-600 text-white">
+//             <tr>
+//               {[
+//                 "Order ID",
+//                 "Customer",
+//                 "Product Name",
+//                 "Product Image",
+//                 "Category",
+//                 "Sub Category",
+//                 "Description",
+//                 "Price",
+//                 // "Old Price",
+//                 "Available Stock",
+//                 "Quantity",
+//                 "Status",
+//                 "Total",
+//                 // "Actions",
+//               ].map((header) => (
+//                 <th key={header} className="border border-gray-700 p-3 text-center font-bold">
+//                   {header}
+//                 </th>
+//               ))}
+//             </tr>
+//           </thead>
+//           <tbody>
+//             {orders.map((order, index) =>
+
+//               <tr key={index} className="text-center bg-blue-50 hover:bg-blue-100 transition-colors duration-200">
+//                 <td className="border border-gray-300 p-3">{index + 1}</td>
+//                 <td className="border border-gray-300 p-3">{order?.userId?.name}</td>
+//                 <td className="border border-gray-300 p-3">{order?.items[0]?.productId?.productName}</td>
+//                 <td className="border border-gray-300 p-3">
+//                   <img
+//                     src={order?.items[0]?.productId?.image} // ✅ Corrected from `images` to `image`
+//                     alt={order?.items[0]?.productId?.productName || "Product Image"}
+//                     className="w-10 h-10 mx-auto"
+//                   />
+
+//                 </td>
+//                 <td className="border border-gray-300 p-3">{order?.items[0]?.productId?.category}</td>
+//                 <td className="border border-gray-300 p-3">{order?.items[0]?.productId?.subCategory}</td>
+//                 <td className="border border-gray-300 p-3">{order?.items[0]?.productId?.productDescription}</td>
+//                 <td className="border border-gray-300 p-3">{order?.items[0]?.productId?.price}</td>
+//                 {/* <td className="border border-gray-300 p-3">{order?.items[0]?.productId?.oldprice}</td> */}
+//                 <td className="border border-gray-300 p-3">{order?.items[0]?.productId?.availableStock}</td>
+//                 <td className="border border-gray-300 p-3">{order?.items[0]?.quantity}</td>
+//                 <td className="border border-gray-300 p-3">{order?.status}</td>
+//                 <td className="border border-gray-300 p-3">{order?.totalAmount}</td>
+//                 {/* <td className="border border-gray-300 p-3 flex justify-center items-center">
+//                   <GiConfirmed
+//                     size={"35px"}
+//                     className="text-green-600 cursor-pointer hover:text-green-800 transition-colors duration-200"
+//                     onClick={() => handleConfirmOrder(order)}
+//                     disabled={loading}
+//                   />
+//                 </td> */}
+//               </tr>
+
+//             )}
+//           </tbody>
+//         </table>
+//       </div>
+//     </div>
+//   );
+// }
+
+
+// "use client";
+// import { useState, useEffect } from "react";
+// import axios from "axios";
+// import { FaEdit } from "react-icons/fa";
+// import { GiConfirmed } from "react-icons/gi";
+
+// export default function ViewOrders() {
+//   const [orders, setOrders] = useState([]);
+//   const [editOrder, setEditOrder] = useState(null);
+//   const [loading, setLoading] = useState(false);
+//   const [currentPage, setCurrentPage] = useState(1); // ✅ Track current page
+//   const itemsPerPage = 5; // ✅ Number of orders per page
+
+//   // Fetch Orders from API
+//   useEffect(() => {
+//     const fetchOrders = async () => {
+//       try {
+//         const res = await axios.get("http://localhost:5000/api/admin-manage/");
+//         console.log("------", res);
+
+//         // Modify the orders to include the full image URL
+//         const updatedOrders = res.data.data.map(order => ({
+//           ...order,
+//           items: order.items.map(item => ({
+//             ...item,
+//             productId: {
+//               ...item.productId,
+//               image: item?.productId?.image
+//                 ? `http://localhost:5000/Images/${item?.productId?.image}`
+//                 : null
+//             }
+//           }))
+//         }));
+
+//         setOrders(updatedOrders);
+//       } catch (error) {
+//         console.error("Error fetching orders:", error);
+//       }
+//     };
+
+//     fetchOrders();
+//   }, []);
+
+//   // **Pagination Logic**
+//   const totalPages = Math.ceil(orders.length / itemsPerPage);
+//   const indexOfLastItem = currentPage * itemsPerPage;
+//   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+//   const currentOrders = orders.slice(indexOfFirstItem, indexOfLastItem);
+
+//   // **Handle Page Change**
+//   const handlePageChange = (pageNumber) => {
+//     setCurrentPage(pageNumber);
+//   };
+
+//   return (
+//     <div className="p-6">
+//       <h2 className="text-2xl font-bold mb-6">All Orders</h2>
+//       <div className="overflow-x-auto">
+//         <table className="w-full min-w-[1200px] border-collapse border border-gray-700 rounded-lg shadow-md">
+//           <thead className="bg-blue-600 text-white">
+//             <tr>
+//               {[
+//                 "Order ID",
+//                 "Customer",
+//                 "Product Name",
+//                 "Product Image",
+//                 "Category",
+//                 "Sub Category",
+//                 "Description",
+//                 "Price",
+//                 "Available Stock",
+//                 "Quantity",
+//                 "Status",
+//                 "Total",
+//               ].map((header) => (
+//                 <th key={header} className="border border-gray-700 p-3 text-center font-bold">
+//                   {header}
+//                 </th>
+//               ))}
+//             </tr>
+//           </thead>
+//           <tbody>
+//             {currentOrders.map((order, index) => (
+//               <tr key={index} className="text-center bg-blue-50 hover:bg-blue-100 transition-colors duration-200">
+//                 <td className="border border-gray-300 p-3">{indexOfFirstItem + index + 1}</td>
+//                 <td className="border border-gray-300 p-3">{order?.userId?.name}</td>
+//                 <td className="border border-gray-300 p-3">{order?.items[0]?.productId?.productName}</td>
+//                 <td className="border border-gray-300 p-3">
+//                   <img
+//                     src={order?.items[0]?.productId?.image}
+//                     alt={order?.items[0]?.productId?.productName || "Product Image"}
+//                     className="w-10 h-10 mx-auto"
+//                   />
+//                 </td>
+//                 <td className="border border-gray-300 p-3">{order?.items[0]?.productId?.category}</td>
+//                 <td className="border border-gray-300 p-3">{order?.items[0]?.productId?.subCategory}</td>
+//                 <td className="border border-gray-300 p-3">{order?.items[0]?.productId?.productDescription}</td>
+//                 <td className="border border-gray-300 p-3">{order?.items[0]?.productId?.price}</td>
+//                 <td className="border border-gray-300 p-3">{order?.items[0]?.productId?.availableStock}</td>
+//                 <td className="border border-gray-300 p-3">{order?.items[0]?.quantity}</td>
+//                 <td className="border border-gray-300 p-3">{order?.status}</td>
+//                 <td className="border border-gray-300 p-3">{order?.totalAmount}</td>
+//               </tr>
+//             ))}
+//           </tbody>
+//         </table>
+//       </div>
+
+//       {/* Pagination Controls */}
+//       <div className="flex justify-center mt-6 space-x-2">
+//         <button
+//           className={`px-4 py-2 border rounded-md ${currentPage === 1 ? "bg-gray-300" : "bg-blue-500 text-white hover:bg-blue-700"}`}
+//           onClick={() => handlePageChange(currentPage - 1)}
+//           disabled={currentPage === 1}
+//         >
+//           Prev
+//         </button>
+
+//         {Array.from({ length: totalPages }, (_, i) => (
+//           <button
+//             key={i}
+//             className={`px-4 py-2 border rounded-md ${currentPage === i + 1 ? "bg-blue-600 text-white" : "bg-gray-200 hover:bg-gray-300"}`}
+//             onClick={() => handlePageChange(i + 1)}
+//           >
+//             {i + 1}
+//           </button>
+//         ))}
+
+//         <button
+//           className={`px-4 py-2 border rounded-md ${currentPage === totalPages ? "bg-gray-300" : "bg-blue-500 text-white hover:bg-blue-700"}`}
+//           onClick={() => handlePageChange(currentPage + 1)}
+//           disabled={currentPage === totalPages}
+//         >
+//           Next
+//         </button>
+//       </div>
+//     </div>
+//   );
+// }
+
+
 "use client";
+
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { FaEdit } from "react-icons/fa";
-import { GiConfirmed } from "react-icons/gi";
 
 export default function ViewOrders() {
   const [orders, setOrders] = useState([]);
-  const [editOrder, setEditOrder] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
-  // Fetch Orders from API
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         const res = await axios.get("http://localhost:5000/api/admin-manage/");
-        setOrders(res.data.data);
+        const updatedOrders = res.data.data.map(order => ({
+          ...order,
+          items: order.items.map(item => ({
+            ...item,
+            productId: {
+              ...item.productId,
+              image: item?.productId?.image
+                ? `http://localhost:5000/Images/${item?.productId?.image}`
+                : null
+            }
+          }))
+        }));
+        setOrders(updatedOrders);
       } catch (error) {
         console.error("Error fetching orders:", error);
       }
     };
-
     fetchOrders();
   }, []);
 
-  // Handle Edit
-  const handleEdit = (order) => {
-    const editableData = {
-      orderId: order._id,
-      customerName: order.userId.name,
-      productName: order.items[0].productId.productName,
-      productImage: order.items[0].productId.images[0],
-      category: order.items[0].productId.category[0],
-      subCategory: order.items[0].productId.subcategory[0],
-      description: order.items[0].productId.productDescription,
-      price: order.items[0].productId.price,
-      oldPrice: order.items[0].productId.oldprice,
-      availableStock: order.items[0].productId.availableStock,
-      quantity: order.items[0].quantity,
-      status: order.items[0].status,
-      totalAmount: order.totalAmount,
-    };
-    setEditOrder(editableData);
-  };
+  const totalPages = Math.ceil(orders.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentOrders = orders.slice(indexOfFirstItem, indexOfLastItem);
 
-  // Handle Input Change
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setEditOrder((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // Handle File Upload
-  const handleFileChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      const imageUrl = URL.createObjectURL(file);
-      setEditOrder((prev) => ({ ...prev, productImage: imageUrl }));
-    }
-  };
-
-  // Save Edited Order
-  const handleSave = async () => {
-    if (!editOrder) return;
-    setLoading(true);
-
-    try {
-      const updatedData = {
-        productName: editOrder.productName,
-        productImage: editOrder.productImage,
-        category: editOrder.category,
-        subCategory: editOrder.subCategory,
-        description: editOrder.description,
-        price: editOrder.price,
-        oldPrice: editOrder.oldPrice,
-        availableStock: editOrder.availableStock,
-        quantity: editOrder.quantity,
-        status: editOrder.status,
-        totalAmount: editOrder.totalAmount,
-      };
-
-      await axios.put(
-        `http://localhost:5000/api/admin-manage/${editOrder.orderId}`,
-        updatedData
-      );
-
-      setOrders((prevOrders) =>
-        prevOrders.map((order) =>
-          order._id === editOrder.orderId
-            ? { ...order, ...updatedData }
-            : order
-        )
-      );
-
-      setEditOrder(null);
-    } catch (error) {
-      console.error("Error updating order:", error);
-    }
-
-    setLoading(false);
-  };
-
-  // Confirm Order API Call
-  const handleConfirmOrder = async (order) => {
-    if (order.status === "Confirmed") return;
-    setLoading(true);
-
-    try {
-      const updatedStatus = { status: "Confirmed" };
-
-      await axios.put(
-        `http://localhost:5000/api/admin-manage/${order._id}`,
-        updatedStatus
-      );
-
-      // ✅ Update Local State Immediately
-      setOrders((prevOrders) =>
-        prevOrders.map((o) =>
-          o._id === order._id
-            ? { ...o, status: "Confirmed" }      //items: o.items.map(item => ({ ...item, status: "Confirmed" }))
-            : o
-        )
-      );
-
-      console.log(`Order ${order._id} confirmed successfully`);
-    } catch (error) {
-      console.error("Error confirming order:", error);
-    }
-
-    setLoading(false);
-  };
-
-  // Close Modal on Background Click
-  const closeModal = (e) => {
-    if (e.target.id === "modal-background") {
-      setEditOrder(null);
-    }
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-6">All Orders</h2>
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[1200px] border-collapse border border-gray-700 rounded-lg shadow-md">
-          <thead className="bg-blue-600 text-white">
-            <tr>
+    <div className="p-4 md:p-6">
+      <h2 className="text-xl md:text-2xl font-bold mb-4">All Orders</h2>
+
+      {/* Scrollable Table Wrapper */}
+      <div className="overflow-x-auto max-w-full border rounded-lg shadow-md">
+        <table className="w-full min-w-[1000px] border-collapse border border-gray-300">
+          <thead>
+            <tr className="bg-gray-700 text-white text-sm md:text-base">
               {[
                 "Order ID",
                 "Customer",
@@ -1155,55 +1445,77 @@ export default function ViewOrders() {
                 "Sub Category",
                 "Description",
                 "Price",
-                "Old Price",
-                "Available Stock",
                 "Quantity",
                 "Status",
                 "Total",
-                "Actions",
               ].map((header) => (
-                <th key={header} className="border border-gray-700 p-3 text-center font-bold">
+                <th key={header} className="border p-2 md:p-4">
                   {header}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {orders.map((order, index) =>
-              order.status === "" ? (
-                <tr key={index} className="text-center bg-blue-50 hover:bg-blue-100 transition-colors duration-200">
-                  <td className="border border-gray-300 p-3">{index + 1}</td>
-                  <td className="border border-gray-300 p-3">{order.userId.name}</td>
-                  <td className="border border-gray-300 p-3">{order.items[0].productId.productName}</td>
-                  <td className="border border-gray-300 p-3">
-                    <img
-                      src={order.items[0].productId.images[0]}
-                      alt={order.items[0].productId.productName}
-                      className="w-10 h-10 mx-auto"
-                    />
-                  </td>
-                  <td className="border border-gray-300 p-3">{order.items[0].productId.category[0]}</td>
-                  <td className="border border-gray-300 p-3">{order.items[0].productId.subcategory[0]}</td>
-                  <td className="border border-gray-300 p-3">{order.items[0].productId.productDescription}</td>
-                  <td className="border border-gray-300 p-3">{order.items[0].productId.price}</td>
-                  <td className="border border-gray-300 p-3">{order.items[0].productId.oldprice}</td>
-                  <td className="border border-gray-300 p-3">{order.items[0].productId.availableStock}</td>
-                  <td className="border border-gray-300 p-3">{order.items[0].quantity}</td>
-                  <td className="border border-gray-300 p-3">{order.status}</td>
-                  <td className="border border-gray-300 p-3">{order.totalAmount}</td>
-                  <td className="border border-gray-300 p-3 flex justify-center items-center">
-                    <GiConfirmed
-                      size={"35px"}
-                      className="text-green-600 cursor-pointer hover:text-green-800 transition-colors duration-200"
-                      onClick={() => handleConfirmOrder(order)}
-                      disabled={loading}
-                    />
-                  </td>
-                </tr>
-              ) : null
-            )}
+            {currentOrders.map((order, index) => (
+              <tr key={index} className="text-center bg-blue-50 hover:bg-blue-100 transition-colors duration-200">
+                <td className="border p-2">{indexOfFirstItem + index + 1}</td>
+                <td className="border p-2">{order?.userId?.name}</td>
+                <td className="border p-2">{order?.items[0]?.productId?.productName}</td>
+                <td className="border p-2">
+                  <img
+                    src={order?.items[0]?.productId?.image}
+                    alt={order?.items[0]?.productId?.productName || "Product Image"}
+                    className="w-10 h-10 mx-auto"
+                  />
+                </td>
+                <td className="border p-2">{order?.items[0]?.productId?.category}</td>
+                <td className="border p-2">{order?.items[0]?.productId?.subCategory}</td>
+                <td className="border p-2 max-w-xs whitespace-normal break-words text-sm">
+                  {order?.items[0]?.productId?.productDescription}
+                </td>
+                <td className="border p-2">{order?.items[0]?.productId?.price}</td>
+                <td className="border p-2">{order?.items[0]?.quantity}</td>
+                <td className="border p-2">{order?.status}</td>
+                <td className="border p-2">{order?.totalAmount}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Pagination Controls */}
+      <div className="flex justify-center mt-6 space-x-2">
+        <button
+          className={`px-4 py-2 rounded-lg text-white ${
+            currentPage === 1 ? "bg-gray-400 cursor-not-allowed" : "bg-black hover:bg-gray-900"
+          }`}
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          Prev
+        </button>
+
+        {Array.from({ length: totalPages }, (_, i) => (
+          <button
+            key={i}
+            className={`px-4 py-2 border rounded-md ${
+              currentPage === i + 1 ? "bg-gray-800 text-white" : "bg-gray-200 hover:bg-gray-300"
+            }`}
+            onClick={() => handlePageChange(i + 1)}
+          >
+            {i + 1}
+          </button>
+        ))}
+
+        <button
+          className={`px-4 py-2 rounded-lg text-white ${
+            currentPage === totalPages ? "bg-gray-400 cursor-not-allowed" : "bg-black hover:bg-gray-900"
+          }`}
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
       </div>
     </div>
   );
