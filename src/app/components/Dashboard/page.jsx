@@ -94,3 +94,80 @@ export default function Dashboard() {
     </div>
   );
 }
+
+
+// "use client";
+// import { useState, useEffect } from "react";
+// import axios from "axios";
+
+// export default function Dashboard() {
+//   const [stats, setStats] = useState({
+//     totalSales: 0,
+//     totalProducts: 0,
+//     ordersRequest: 0,
+//     confirmedOrders: 0,
+//   });
+
+//   const fetchStats = async () => {
+//     try {
+//       const [productsResponse, ordersResponse] = await Promise.all([
+//         axios.get("http://localhost:5000/api/stocks/getStock", {
+//           headers: { Authorization: `Bearer ${token}` },
+//         }),
+//         // axios.get("https://api.silksew.com/api/orders", {
+//         //   headers: { Authorization: `Bearer ${token}` },
+//         // }),
+//       ]);
+
+//       const productsData = Array.isArray(productsResponse.data)
+//         ? productsResponse.data
+//         : productsResponse.data.products || [];
+//       // const ordersData = Array.isArray(ordersResponse.data)
+//       //   ? ordersResponse.data
+//       //   : ordersResponse.data.orders || [];
+
+//       let totalSales = 0;
+//       let confirmedCount = 0;
+//       // ordersData.forEach((order) => {
+//       //   if (order.status === "ConfirmedOrder") {
+//       //     totalSales += order.totalAmount || 0;
+//       //     confirmedCount++;
+//       //   }
+//       // });
+
+//       setStats({
+//         totalSales,
+//         totalProducts: productsData.length,
+//         ordersRequest: ordersData.length,
+//         confirmedOrders: confirmedCount,
+//       });
+//     } catch (error) {
+//       console.error("Error fetching dashboard stats:", error);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchStats();
+//   }, []);
+
+//   const statCards = [
+//     { title: "Total Sales", value: stats.totalSales, color: "bg-blue-500" },
+//     { title: "Total Products", value: stats.totalProducts, color: "bg-green-500" },
+//     { title: "Orders Request", value: stats.ordersRequest, color: "bg-yellow-500" },
+//     { title: "Confirmed Orders", value: stats.confirmedOrders, color: "bg-purple-500" },
+//   ];
+
+//   return (
+//     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-6 px-4 sm:px-6">
+//       {statCards.map((stat, index) => (
+//         <div
+//           key={index}
+//           className={`p-4 sm:p-6 rounded-lg text-white shadow-lg ${stat.color} flex flex-col items-center`}
+//         >
+//           <h3 className="text-base sm:text-lg font-semibold">{stat.title}</h3>
+//           <p className="text-xl sm:text-2xl font-bold mt-2">{stat.value}</p>
+//         </div>
+//       ))}
+//     </div>
+//   );
+// }

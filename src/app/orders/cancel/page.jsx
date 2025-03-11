@@ -227,9 +227,9 @@ export default function ManageOrders() {
             </tr>
           </thead>
           <tbody>
-            {orders.map((order) => (
+            {orders.map((order,index) => (
               <tr key={order._id} className="text-center bg-blue-50 hover:bg-blue-100 transition-colors duration-200">
-                <td className="border border-gray-300 p-3 text-xs sm:text-sm">{order?._id}</td>
+                <td className="border border-gray-300 p-3 text-xs sm:text-sm">{order._id}</td>
                 <td className="border border-gray-300 p-3 text-xs sm:text-sm">{order?.userId?.name}</td>
                 <td className="border border-gray-300 p-3">{getStatusBadge(order?.status)}</td>
                 <td className="border border-gray-300 p-3">

@@ -931,6 +931,266 @@
 
 
 
+// "use client";
+
+// import { useState, useEffect } from "react";
+// import { ToastContainer, toast } from "react-toastify";
+// import "react-toastify/dist/ReactToastify.css";
+
+// export default function Page() {
+//     const [stocks, setStocks] = useState([]);
+//     const [loading, setLoading] = useState(true);
+//     const [error, setError] = useState(null);
+//     const [editId, setEditId] = useState(null);
+//     const [currentPage, setCurrentPage] = useState(1);
+//     const itemsPerPage = 5; // Number of items per page
+
+//     const [newStock, setNewStock] = useState({
+//         productName: "",
+//         category: "",
+//         quantity: "",
+//         unit: "",
+//         availableStock: "",
+//         price: "",
+//         image: ""
+//     });
+
+//     const categories = ["Dairy Products", "Sauce", "Beverage", "Vegetables", "Bakery"];
+//     const units = ["L", "ml", "kg", "gm"];
+
+//     useEffect(() => {
+//         const fetchStock = async () => {
+//             try {
+//                 const response = await fetch("http://localhost:5000/api/stocks/getStock");
+//                 if (!response.ok) throw new Error("Failed to fetch stock data");
+
+//                 const data = await response.json();
+
+//                 // Ensure image URL is correct
+//                 const updatedData = data.map(stock => ({
+//                     ...stock,
+//                     image: stock.image ? `http://localhost:5000/Images/${stock.image}` : null
+//                 }));
+
+//                 console.log(updatedData)
+//                 setStocks(updatedData);
+//                 setLoading(false);
+//             } catch (err) {
+//                 setError(err.message);
+//                 setLoading(false);
+//             }
+//         };
+
+//         fetchStock();
+//     }, []);
+
+//     const handleChange = (e) => {
+//         let { name, value } = e.target;
+//         if ((name === "quantity" || name === "availableStock" || name === "price") && value < 0) {
+//             value = 0;
+//         }
+//         setNewStock({ ...newStock, [name]: value });
+//     };
+
+//     const handleFileChange = (e) => {
+//         const file = e.target.files[0];
+//         if (file) {
+//             const reader = new FileReader();
+//             reader.onloadend = () => {
+//                 setNewStock({ ...newStock, image: reader.result });
+//             };
+//             reader.readAsDataURL(file);
+//         }
+//     };
+
+//     const deleteStock = async (id) => {
+//         try {
+//             await fetch(`http://localhost:5000/api/stocks/${id}`, { method: "DELETE" });
+//             setStocks(stocks.filter(stock => stock._id !== id));
+//             toast.success("Stock deleted successfully");
+//         } catch (error) {
+//             console.error("Error deleting stock:", error);
+//             toast.error("Failed to delete stock");
+//         }
+//     };
+
+//     const startEditing = (stock) => {
+//         setEditId(stock._id);
+//         setNewStock({
+//             productName: stock.productName,
+//             category: stock.category?.[0] || "",
+//             quantity: stock.quantity,
+//             unit: stock.unit?.[0] || "",
+//             availableStock: stock.availableStock || 0,
+//             price: stock.price || 0,
+//             image: stock.image || ""
+//         });
+//     };
+
+//     const updateStock = async () => {
+//         try {
+//             const response = await fetch(`http://localhost:5000/api/stocks/${editId}`, {
+//                 method: "PUT",
+//                 headers: { "Content-Type": "application/json" },
+//                 body: JSON.stringify(newStock)
+//             });
+
+//             if (!response.ok) throw new Error("Failed to update stock");
+
+//             const updatedProduct = await response.json();
+//             setStocks((prevStocks) =>
+//                 prevStocks.map((stock) =>
+//                     stock._id === editId ? updatedProduct : stock
+//                 )
+//             );
+
+//             toast.success("Stock updated successfully!");
+//             closeForm();
+//         } catch (error) {
+//             console.error("Error updating stock:", error);
+//             toast.error("Failed to update stock");
+//         }
+//     };
+
+//     const closeForm = () => {
+//         setEditId(null);
+//         setNewStock({ productName: "", category: "", quantity: "", unit: "", availableStock: "", price: "", image: "" });
+//     };
+
+//     const indexOfLastItem = currentPage * itemsPerPage;
+//     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+//     const currentStocks = stocks.slice(indexOfFirstItem, indexOfLastItem);
+//     const totalPages = Math.ceil(stocks.length / itemsPerPage);
+
+//     const nextPage = () => {
+//         if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+//     };
+
+//     const prevPage = () => {
+//         if (currentPage > 1) setCurrentPage(currentPage - 1);
+//     };
+
+
+
+//     if (loading) return <p className="text-center text-lg font-semibold">Loading stock data...</p>;
+//     if (error) return <p className="text-red-500 text-center">Error: {error}</p>;
+
+//     return (
+//         <div className="max-w-7xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+//             <ToastContainer position="top-right" autoClose={3000} />
+
+//             <h2 className="text-4xl font-bold text-center mb-6 text-gray-800">Stock Management</h2>
+
+//             {editId && (
+//                 <div className="mb-6 p-6 border rounded-lg bg-gray-50 shadow-md">
+//                     <h3 className="text-xl font-semibold text-gray-700 mb-4">Editing Product</h3>
+//                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+//                         <label className="block font-medium">Product Name:
+//                             <input type="text" name="productName" value={newStock.productName} onChange={handleChange} className="border p-3 w-full rounded-lg" />
+//                         </label>
+//                         <label className="block font-medium">Category:
+//                             <select name="category" value={newStock.category || ""} onChange={handleChange} className="border p-3 w-full rounded-lg">
+//                                 <option value="">Select Category</option>
+//                                 {categories.map((cat) => (
+//                                     <option key={cat} value={cat}>{cat}</option>
+//                                 ))}
+//                             </select>
+//                         </label>
+//                         <label className="block font-medium">Quantity:
+//                             <input type="number" name="quantity" value={newStock.quantity} onChange={handleChange} className="border p-3 w-full rounded-lg" min="0" />
+//                         </label>
+//                         <label className="block font-medium">Price:
+//                             <input type="number" name="price" value={newStock.price} onChange={handleChange} className="border p-3 w-full rounded-lg" min="0" />
+//                         </label>
+//                         <label className="block font-medium">Available Stock:
+//                             <input type="number" name="price" value={newStock.availableStock} onChange={handleChange} className="border p-3 w-full rounded-lg" min="0" />
+//                         </label>
+//                         {/* <label className="block font-medium">Image:
+//                             <input type="file" accept="image/*" onChange={handleFileChange} className="border p-3 w-full rounded-lg" />
+//                             {newStock.image && <img src={newStock.image} alt="Preview" className="w-20 h-20 object-cover mt-2" />}
+//                         </label> */}
+//                     </div>
+
+//                     <div className="mt-4 flex space-x-3">
+//                         <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700" onClick={updateStock}>
+//                             Update
+//                         </button>
+//                         <button className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600" onClick={closeForm}>
+//                             Close Form
+//                         </button>
+//                     </div>
+//                 </div>
+//             )}
+
+//             <table className="w-full border-collapse border border-gray-300">
+//                 <thead>
+//                     <tr className="bg-gray-700 text-white">
+//                         <th className="border p-4">Image</th>
+//                         <th className="border p-4">Product</th>
+//                         <th className="border p-4">Category</th>
+//                         <th className="border p-4">Quantity</th>
+//                         <th className="border p-4">Available Stock</th>
+//                         <th className="border p-4">Price</th>
+//                         <th className="border p-4">Actions</th>
+//                     </tr>
+//                 </thead>
+//                 <tbody>
+//                     {stocks.map((stock) => (
+//                         <tr key={stock._id} className="border">
+//                             <td className="border p-3">
+//                                 <td >
+//                                     {stock.image ? (
+//                                         <img src={stock.image} alt={stock.productName} className="w-20 h-20 object-cover" />
+//                                     ) : (
+//                                         "No Image"
+//                                     )}
+//                                 </td>
+//                             </td>
+//                             <td className="border p-3">{stock.productName}</td>
+//                             {/* <td className="border p-3">{stock.category?.[0] || ""}</td> */}
+//                             <td className="border p-3">{stock.category}</td>
+//                             <td className="border p-3">{stock.quantity}{" "}{stock.unit}</td>
+//                             <td className="border p-3">{stock.availableStock || 0}</td>
+//                             <td className="border p-3">{stock.price}{" "}₹</td>
+                            // <td className=" p-3 flex flex-col md:flex-row justify-center items-center gap-2">
+                            //     <button className="bg-yellow-500 text-white px-3 py-2 mt-5 rounded-md w-full md:w-auto text-sm md:text-base hover:bg-yellow-600 transition"
+                            //         onClick={() => startEditing(stock)}>Edit</button>
+                            //     <button className="bg-red-500 text-white px-3 py-2  mt-5 rounded-md w-full md:w-auto text-sm md:text-base hover:bg-red-600 transition"
+                            //         onClick={() => deleteStock(stock._id)}>Delete</button>
+                            // </td>
+//                         </tr>
+//                     ))}
+//                 </tbody>
+//             </table>
+
+//             {/* Pagination Controls */}
+//             <div className="flex justify-center items-center mt-4 space-x-4">
+//                 <button
+//                     onClick={prevPage}
+//                     disabled={currentPage === 1}
+//                     className={`px-4 py-2 rounded-lg text-white ${currentPage === 1 ? "bg-gray-800 cursor-not-allowed" : "bg-black hover:bg-gray-900"}`}
+//                 >
+//                     Previous
+//                 </button>
+
+//                 <span className="text-lg font-semibold">
+//                     Page {currentPage} of {totalPages}
+//                 </span>
+//                 <button
+//                     onClick={nextPage}
+//                     disabled={currentPage === totalPages}
+//                     className={`px-4 py-2 rounded-lg  text-white ${currentPage === totalPages ? "bg-gray-800 cursor-not-allowed" : "bg-black hover:bg-gray-900"}`}
+//                 >
+//                     Next
+//                 </button>
+//             </div>
+
+//         </div>
+//     );
+// }
+
+
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -943,22 +1203,9 @@ export default function Page() {
     const [error, setError] = useState(null);
     const [editId, setEditId] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 5; // Number of items per page
+    const itemsPerPage = 5;
 
-    const [newStock, setNewStock] = useState({
-        productName: "",
-        category: "",
-        quantity: "",
-        unit: "",
-        availableStock: "",
-        price: "",
-        image: ""
-    });
-
-    const categories = ["Dairy Products", "Sauce", "Beverage", "Vegetables", "Bakery"];
-    const units = ["L", "ml", "kg", "gm"];
-
-    useEffect(() => {
+       useEffect(() => {
         const fetchStock = async () => {
             try {
                 const response = await fetch("http://localhost:5000/api/stocks/getStock");
@@ -1062,111 +1309,59 @@ export default function Page() {
     const currentStocks = stocks.slice(indexOfFirstItem, indexOfLastItem);
     const totalPages = Math.ceil(stocks.length / itemsPerPage);
 
-    const nextPage = () => {
-        if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-    };
-
-    const prevPage = () => {
-        if (currentPage > 1) setCurrentPage(currentPage - 1);
-    };
-
-
-
-    if (loading) return <p className="text-center text-lg font-semibold">Loading stock data...</p>;
-    if (error) return <p className="text-red-500 text-center">Error: {error}</p>;
-
     return (
         <div className="max-w-7xl mx-auto p-6 bg-white shadow-lg rounded-lg">
             <ToastContainer position="top-right" autoClose={3000} />
 
             <h2 className="text-4xl font-bold text-center mb-6 text-gray-800">Stock Management</h2>
 
-            {editId && (
-                <div className="mb-6 p-6 border rounded-lg bg-gray-50 shadow-md">
-                    <h3 className="text-xl font-semibold text-gray-700 mb-4">Editing Product</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <label className="block font-medium">Product Name:
-                            <input type="text" name="productName" value={newStock.productName} onChange={handleChange} className="border p-3 w-full rounded-lg" />
-                        </label>
-                        <label className="block font-medium">Category:
-                            <select name="category" value={newStock.category || ""} onChange={handleChange} className="border p-3 w-full rounded-lg">
-                                <option value="">Select Category</option>
-                                {categories.map((cat) => (
-                                    <option key={cat} value={cat}>{cat}</option>
-                                ))}
-                            </select>
-                        </label>
-                        <label className="block font-medium">Quantity:
-                            <input type="number" name="quantity" value={newStock.quantity} onChange={handleChange} className="border p-3 w-full rounded-lg" min="0" />
-                        </label>
-                        <label className="block font-medium">Price:
-                            <input type="number" name="price" value={newStock.price} onChange={handleChange} className="border p-3 w-full rounded-lg" min="0" />
-                        </label>
-                        <label className="block font-medium">Available Stock:
-                            <input type="number" name="price" value={newStock.availableStock} onChange={handleChange} className="border p-3 w-full rounded-lg" min="0" />
-                        </label>
-                        {/* <label className="block font-medium">Image:
-                            <input type="file" accept="image/*" onChange={handleFileChange} className="border p-3 w-full rounded-lg" />
-                            {newStock.image && <img src={newStock.image} alt="Preview" className="w-20 h-20 object-cover mt-2" />}
-                        </label> */}
-                    </div>
+            {loading && <p className="text-center text-lg font-semibold">Loading stock data...</p>}
+            {error && <p className="text-red-500 text-center">Error: {error}</p>}
 
-                    <div className="mt-4 flex space-x-3">
-                        <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700" onClick={updateStock}>
-                            Update
-                        </button>
-                        <button className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600" onClick={closeForm}>
-                            Close Form
-                        </button>
-                    </div>
-                </div>
-            )}
-
-            <table className="w-full border-collapse border border-gray-300">
-                <thead>
-                    <tr className="bg-gray-700 text-white">
-                        <th className="border p-4">Image</th>
-                        <th className="border p-4">Product</th>
-                        <th className="border p-4">Category</th>
-                        <th className="border p-4">Quantity</th>
-                        <th className="border p-4">Available Stock</th>
-                        <th className="border p-4">Price</th>
-                        <th className="border p-4">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {stocks.map((stock) => (
-                        <tr key={stock._id} className="border">
-                            <td className="border p-3">
-                                <td >
+            <div className="overflow-x-auto">
+                <table className="w-full border-collapse border border-gray-300">
+                    <thead>
+                        <tr className="bg-gray-700 text-white">
+                            <th className="border p-4">Image</th>
+                            <th className="border p-4">Product</th>
+                            <th className="border p-4">Category</th>
+                            <th className="border p-4">Quantity</th>
+                            <th className="border p-4">Available Stock</th>
+                            <th className="border p-4">Price</th>
+                            <th className="border p-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {currentStocks.map((stock) => (
+                            <tr key={stock._id} className="border">
+                                <td className="border p-3 flex justify-center">
                                     {stock.image ? (
-                                        <img src={stock.image} alt={stock.productName} className="w-20 h-20 object-cover" />
+                                        <img src={stock.image} alt={stock.productName} className="w-16 h-16 object-cover" />
                                     ) : (
                                         "No Image"
                                     )}
                                 </td>
-                            </td>
-                            <td className="border p-3">{stock.productName}</td>
-                            {/* <td className="border p-3">{stock.category?.[0] || ""}</td> */}
-                            <td className="border p-3">{stock.category}</td>
-                            <td className="border p-3">{stock.quantity}{" "}{stock.unit}</td>
-                            <td className="border p-3">{stock.availableStock || 0}</td>
-                            <td className="border p-3">{stock.price}{" "}₹</td>
-                            <td className=" p-3 flex flex-col md:flex-row justify-center items-center gap-2">
+                                <td className="border p-3">{stock.productName}</td>
+                                <td className="border p-3">{stock.category}</td>
+                                <td className="border p-3">{stock.quantity} {stock.unit}</td>
+                                <td className="border p-3">{stock.availableStock || 0}</td>
+                                <td className="border p-3">{stock.price} ₹</td>
+                                <td className=" p-3 flex flex-col md:flex-row justify-center items-center gap-2">
                                 <button className="bg-yellow-500 text-white px-3 py-2 mt-5 rounded-md w-full md:w-auto text-sm md:text-base hover:bg-yellow-600 transition"
                                     onClick={() => startEditing(stock)}>Edit</button>
                                 <button className="bg-red-500 text-white px-3 py-2  mt-5 rounded-md w-full md:w-auto text-sm md:text-base hover:bg-red-600 transition"
                                     onClick={() => deleteStock(stock._id)}>Delete</button>
                             </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
 
             {/* Pagination Controls */}
             <div className="flex justify-center items-center mt-4 space-x-4">
                 <button
-                    onClick={prevPage}
+                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                     disabled={currentPage === 1}
                     className={`px-4 py-2 rounded-lg text-white ${currentPage === 1 ? "bg-gray-800 cursor-not-allowed" : "bg-black hover:bg-gray-900"}`}
                 >
@@ -1177,14 +1372,13 @@ export default function Page() {
                     Page {currentPage} of {totalPages}
                 </span>
                 <button
-                    onClick={nextPage}
+                    onClick={() => setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev))}
                     disabled={currentPage === totalPages}
-                    className={`px-4 py-2 rounded-lg  text-white ${currentPage === totalPages ? "bg-gray-800 cursor-not-allowed" : "bg-black hover:bg-gray-900"}`}
+                    className={`px-4 py-2 rounded-lg text-white ${currentPage === totalPages ? "bg-gray-800 cursor-not-allowed" : "bg-black hover:bg-gray-900"}`}
                 >
                     Next
                 </button>
             </div>
-
         </div>
     );
 }

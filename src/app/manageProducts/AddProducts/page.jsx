@@ -375,13 +375,15 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const categoryOptions = {
-  "Dairy Products": ["Milk", "Paneer & Cheese", "Ghee & Butter", "Curd & Yogurt","Sweetened Dairy Beverages"],
+  "Dairy Products": ["Milk", "Paneer & Cheese", "Ghee & Butter", "Curd & Yogurt","Sweetened Dairy Beverages","Buttermilk","Shrikhand & Amrakhand"],
   "Baking & Cooking Essentials": ["Dessert Premixes"],
-  "Bakery": ["Bread", "Cake", "Cookies", "Pastries"],
+  "Bakery": ["Bread", "Cake", "Cookies", "Pastries","Peda"],
   "Sauce": ["Tomato Sauce", "Soy Sauce", "Barbecue Sauce", "Chili Sauce","Chocolate Sauce"],
   "Vegetables": ["Carrots", "Potatoes", "Tomatoes", "Spinach","Fresh Vegetables"],
   "Frozen Foods / Fresh Vegetables": ["Frozen Snacks","Frozen Vegetbles"],
   "Beverages": ["Juice", "Soda", "Coffee", "Tea","Instant Drink Mixes / Hot Beverages"],
+  "Spices & Condiments": ["Blended Spices"],
+  "Snacks & Namkeen": ["Farsan"],
 };
 
 const unitOptions = ["L", "ml", "gm", "kg"];

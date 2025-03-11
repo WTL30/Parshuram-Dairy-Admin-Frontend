@@ -210,9 +210,9 @@ export default function Page() {
     <div className="p-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold">Block/Unblock Users</h2>
-        <button className="bg-blue-500 text-white px-4 py-2 rounded flex items-center gap-2">
+        {/* <button className="bg-blue-500 text-white px-4 py-2 rounded flex items-center gap-2">
           <FaPlus /> Add User
-        </button>
+        </button> */}
       </div>
 
       <table className="border-collapse w-full border border-gray-300">

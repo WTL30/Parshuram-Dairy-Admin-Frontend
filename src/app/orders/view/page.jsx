@@ -1392,6 +1392,9 @@ import axios from "axios";
 export default function ViewOrders() {
   const [orders, setOrders] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+
+
   const itemsPerPage = 5;
 
   useEffect(() => {
@@ -1418,18 +1421,40 @@ export default function ViewOrders() {
     fetchOrders();
   }, []);
 
-  const totalPages = Math.ceil(orders.length / itemsPerPage);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentOrders = orders.slice(indexOfFirstItem, indexOfLastItem);
+  // const totalPages = Math.ceil(orders.length / itemsPerPage);
+  // const indexOfLastItem = currentPage * itemsPerPage;
+  // const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  // const currentOrders = orders.slice(indexOfFirstItem, indexOfLastItem);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
+  const filteredOrders = orders.filter(order =>
+    order?._id.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||  // ✅ Convert ObjectId to string
+    order?.userId?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    order?.items[0]?.productId?.productName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentOrders = filteredOrders.slice(indexOfFirstItem, indexOfLastItem);
+
+
+
   return (
     <div className="p-4 md:p-6">
       <h2 className="text-xl md:text-2xl font-bold mb-4">All Orders</h2>
+
+        {/* Search Bar */}
+        <input
+        type="text"
+        placeholder="Search by Order ID, Customer, or Product Name"
+        className="border p-2 rounded w-full mb-4"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
 
       {/* Scrollable Table Wrapper */}
       <div className="overflow-x-auto max-w-full border rounded-lg shadow-md">
@@ -1446,7 +1471,7 @@ export default function ViewOrders() {
                 "Description",
                 "Price",
                 "Quantity",
-                "Status",
+                // "Status",
                 "Total",
               ].map((header) => (
                 <th key={header} className="border p-2 md:p-4">
@@ -1456,16 +1481,16 @@ export default function ViewOrders() {
             </tr>
           </thead>
           <tbody>
-            {currentOrders.map((order, index) => (
-              <tr key={index} className="text-center bg-blue-50 hover:bg-blue-100 transition-colors duration-200">
-                <td className="border p-2">{indexOfFirstItem + index + 1}</td>
+            {currentOrders.map((order) => (
+              <tr key={order._id} className="text-center bg-blue-50 hover:bg-blue-100 transition-colors duration-200">
+                <td className="border p-2">{indexOfFirstItem + order._id}</td>
                 <td className="border p-2">{order?.userId?.name}</td>
                 <td className="border p-2">{order?.items[0]?.productId?.productName}</td>
                 <td className="border p-2">
                   <img
                     src={order?.items[0]?.productId?.image}
                     alt={order?.items[0]?.productId?.productName || "Product Image"}
-                    className="w-10 h-10 mx-auto"
+                    className="w-20 h-20 mx-auto"
                   />
                 </td>
                 <td className="border p-2">{order?.items[0]?.productId?.category}</td>
@@ -1475,7 +1500,7 @@ export default function ViewOrders() {
                 </td>
                 <td className="border p-2">{order?.items[0]?.productId?.price}</td>
                 <td className="border p-2">{order?.items[0]?.quantity}</td>
-                <td className="border p-2">{order?.status}</td>
+                {/* <td className="border p-2">{order?.status}</td> */}
                 <td className="border p-2">{order?.totalAmount}</td>
               </tr>
             ))}

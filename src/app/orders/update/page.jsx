@@ -530,9 +530,9 @@ export default function UpdateOrderStatus() {
                         </tr>
                     </thead>
                     <tbody>
-                        {orders.map((order, index) => (
+                        {orders.map((order) => (
                             <tr key={order._id} className="text-center">
-                                <td className="border p-2">{index + 1}</td>
+                                <td className="border p-2">{order._id}</td>
                                 <td className="border p-2">{order?.userId?.name}</td>
                                 <td
                                     className={`border p-2 font-semibold ${order?.status === "Pending"
